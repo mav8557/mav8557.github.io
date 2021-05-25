@@ -3,26 +3,8 @@ layout: page
 title: About
 ---
 
-Sidey is a simple and minimalistic jekyll blogging theme.
+# Hi!
 
-### Features
+I'm an information security student at the Rochester Institute of Technology. I'm interested in malware research, red teaming, reverse engineering, programming, and [edtech](https://en.wikipedia.org/wiki/Educational_technology) in cybersecurity.
 
-- Responsive design
-- Inline CSS
-- Anchor headings
-- Search
-- Tags & tag pages
-- Security headers (for Netlify hosting)
-- 404 page
-- Compressed CSS and HTML
-- 100/100 score on Lighthouse, Page Speed Insights & Webpagetest
-- Robots.txt
-- Atom & Json feeds
-- Sass
-- Seo optimized (Twitter cards, Facebook Open Graph, Schema.org)
-- Ultra fast (Only ~5kb of CSS)
-- Sidebar navigation
-
-### Screenshot
-
-![Screenshot](screenshot.png)
+This blog is a summation of the thoughts and projects that I'm working on.
