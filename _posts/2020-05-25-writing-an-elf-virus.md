@@ -7,12 +7,35 @@ comments: true
 tags: [coding, malware, programming]
 ---
 
-Lorem ipsum dolor amet sled viral art party blue bottle single-origin coffee cardigan, selvage man braid helvetica. Banh mi taxidermy meditation microdosing. Selvage cornhole YOLO, small batch vexillologist raclette VHS prism sustainable 8-bit ugh semiotics letterpress disrupt pop-up. Celiac shabby chic ugh, jianbing whatever kitsch tattooed edison bulb kogi irony etsy.
+Recently I have been interested by the concept of computer viruses, and self-replicating programs more generally. There's something very compelling about the idea of a program that can move on it's own, spreading where you mgiht not intend it to. To fulfill that interest and learn more about viruses, I decided to write one.
 
-Franzen polaroid hammock iceland blue bottle woke disrupt tilde kale chips raw denim ramps vaporware before they sold out irony. Narwhal vaporware offal shaman celiac kinfolk activated charcoal salvia lomo irony readymade normcore. Yr activated charcoal kombucha, man braid whatever biodiesel hella crucifix adaptogen bicycle rights small batch skateboard mixtape. Hot chicken sustainable green juice 90's. Ennui kickstarter hella pug, meggings man bun shaman messenger bag. Chambray adaptogen kombucha pug affogato, kogi green juice distillery ugh banh mi.
+## What is a Virus?
 
-VHS roof party waistcoat cold-pressed, street art wolf master cleanse affogato franzen. Shaman iceland pour-over intelligentsia typewriter tilde, pitchfork copper mug. Wayfarers kickstarter adaptogen vinyl beard kombucha. Organic pinterest master cleanse, mixtape fam gentrify lo-fi kogi.
+Computer malware generally has been referred to as "viruses" for quite awhile, but as infosec gurus and antivirus companies would tell you, the term refers to a specific type of malware. Viruses are programs that can spread to other programs, infecting them with their own code. This is similar to but distinct from a worm, which is a program that can spread to other *computers*. 
 
-Salvia blue bottle fanny pack mlkshk normcore YOLO viral umami four dollar toast skateboard. Chambray taxidermy slow-carb street art chartreuse. Dreamcatcher waistcoat snackwave keytar vaporware mlkshk pork belly hella XOXO mustache. Tattooed semiotics edison bulb, disrupt polaroid craft beer vape enamel pin bespoke flannel letterpress brooklyn subway tile copper mug. Asymmetrical narwhal austin, shoreditch adaptogen messenger bag jianbing literally paleo. Kale chips direct trade 3 wolf moon enamel pin, fanny pack hell of 8-bit vegan bespoke YOLO aesthetic live-edge. Retro succulents before they sold out whatever bushwick.
+![Worms spread to other computers, viruses spread to other files](assets/img/virusvworm.jpg)
 
-Actually hella you probably haven't heard of them quinoa try-hard la croix. Street art schlitz actually hell of pour-over air plant. Post-ironic franzen brunch mumblecore readymade. Food truck photo booth polaroid, gochujang vegan street art yr before they sold out man bun. Tilde selfies chia pitchfork everyday carry post-ironic mumblecore sartorial VHS master cleanse activated charcoal biodiesel williamsburg cronut jean shorts. Poutine helvetica keffiyeh butcher pop-up.
+
+## Structure of a Virus
+
+A virus is essentially two parts:
+
+1. Infector
+	- Search for other programs to infect
+	- Set up programs for infection
+	- Copy code into infected file
+2. Payload
+
+The infector is gives the virus its namesake, it infect other programs with its own code. It is also what makes programming one interesting, or at least a little confusing. In some sense, we can think of the infection steps as somewhat similar to ***recursion***.
+
+
+1. Find an appropriate file to infect
+2. Prepare the file to expect new code
+3. Write some code to where it is now expecting it to be
+
+In the case of viruses, that code we write just happens to be our own.
+
+
+## Introduction to ELF
+
+I wanted to write an ELF virus, one that would infect compiled programs. ELF, the Executable and Linkable Format is the standard that defines compiled programs for most open-source operating systems. 
