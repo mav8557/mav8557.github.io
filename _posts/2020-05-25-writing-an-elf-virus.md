@@ -13,7 +13,7 @@ Recently I have been interested by the concept of computer viruses, and self-rep
 
 Computer malware generally has been referred to as "viruses" for quite awhile, but as infosec gurus and antivirus companies would tell you, the term refers to a specific type of malware. Viruses are programs that can spread to other programs, infecting them with their own code. This is similar to but distinct from a worm, which is a program that can spread to other *computers*. 
 
-![Worms spread to other computers, viruses spread to other files](assets/img/virusvworm.jpg)
+![Worms spread to other computers, viruses spread to other files](/assets/img/virusvworm.jpg)
 
 
 ## Structure of a Virus
