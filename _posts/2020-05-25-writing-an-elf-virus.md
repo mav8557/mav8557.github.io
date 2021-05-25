@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Writing an ELF virus
+title: Writing an ELF Virus
 description: How do you write an ELF virus?
 summary: The mechanics and process of writing an ELF virus
 comments: true
-tags: [malware, programming]
+tags: [coding, malware, programming]
 ---
 
 Lorem ipsum dolor amet sled viral art party blue bottle single-origin coffee cardigan, selvage man braid helvetica. Banh mi taxidermy meditation microdosing. Selvage cornhole YOLO, small batch vexillologist raclette VHS prism sustainable 8-bit ugh semiotics letterpress disrupt pop-up. Celiac shabby chic ugh, jianbing whatever kitsch tattooed edison bulb kogi irony etsy.
