@@ -6,3 +6,4 @@ tmp
 .DS_Store
 .jekyll-cache
 .git
+Gemfile.lock
