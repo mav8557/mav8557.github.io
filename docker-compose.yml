@@ -1,8 +1,8 @@
 services:
   blog:
-    build: .
-    image: blog
+    image: jekyll/jekyll:4.0
     ports:
-      - 8000:4000
+      - 4000:4000
     volumes:
-      - ${PWD}:/code
+      - ${PWD}:/srv/jekyll
+    command: 'jekyll serve --trace'

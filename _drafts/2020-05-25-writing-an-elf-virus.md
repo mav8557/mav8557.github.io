@@ -50,16 +50,16 @@ Since we are adding code, and not doing anything with linking, we're only going 
 Infecting ELF files means that our code is going to have to be assembly. Otherwise, you'd have to convert between the intermediate form, C maybe, and the assembly when reading the code and writing code to the target files. So to simplify things we can just use assembly, and copy the bytes representing opcodes to target files, so that they load those opcodes and run them. Writing in assembly means that our code is the same as our data: the bytes we run are the bytes we copy.
 
 
-Since we're writing assembly, we need an assembler. You can use whatever here, but a good assembler will support macros definitions and structs. I usually NASM, the Netwide Assembler, but ended up using FASM for this project. The first resources I looked at used it and is a slightly easier one to get started with.
+Since we're writing assembly, we need an assembler. You can use whatever here, but a good assembler will support macro definitions and structs. I usually use NASM, the Netwide Assembler, but ended up using FASM for this project. The first resources I looked at used it and it is a slightly easier one to get started with.
 
 
 ## Development Environment
 
 Whenever starting a project, a good development environment is key. It need not be a full IDE, but you should set up a convenient build process that lets you iterate and test new code quickly. Having a separate environment is often convenient for dependency and safety reasons, the latter being especially important for writing a virus.
 
-One thing that virus authors didn't have at the time when viruses were big was easy access to virtualziation, to test their viruses without infecting their own files. Since we're not doing anything kernel or hardware related, just infecting software, we can use something they certainly didn't have: Docker. A basic container makes a quick and safe development environment. We can infect binaries in the container, and restart it when we want to clean the slate. Another strong tool in your arsenal is a good debugger. Maybe you felt I intentionally didn't put "gdb" and "good debugger" in the same previous sentence, but with the PEDA extension it is honestly a very decent tool. In all fairness, I only joke about gdb, it's a great tool and PEDA makes it much easier to work with. Having one is the quickest way to figure out why your code is not working and what the results should be.
+One thing that virus authors didn't have at the time when viruses were big was easy access to virtualziation, to test their viruses without infecting their own files. Since we're not doing anything kernel or hardware related, just infecting software, we can use something they certainly didn't have: Docker. A basic container makes a quick and safe development environment. We can infect binaries in the container, and restart it when we want to clean the slate. Another important tool is a debugger, so that you can understand what your code is doing at each step. Having one is the quickest way to figure out why your code is not working and what the results should be. I've been using GDB with the PEDA extension for awhile, but finally made the switch to pwndbg. It uses PEDA and iterates on it to provide more features.
 
-Another tool that I highly recommend is strace. **s**trace traces **syscalls**, which are the main I/O and other requests the virus will make to the kernel to perform basic actions, like writing to and searching for files. strace will print the arguments and return values from these syscalls, which can give you a good sense of what a program is accessing and attempting to do. A nice feature is that it prints out the errno from a syscall that fails, which can be searched for in the manpage of that syscall to help you determine what isn't working. I used it a lot to follow syscalls, observing errors and also seeing which get called after conditional statements.
+Another tool that I highly recommend is strace. **s**trace traces **syscalls**, which are the main I/O and other requests the virus will make to the kernel to perform basic actions, like writing to and searching for files. strace will print the arguments and return values from these syscalls, which can give you a good sense of what a program is accessing and attempting to do. A nice feature is that it prints out the errno from a syscall that fails, which can be searched for in the manpage of that syscall to help you determine what isn't working. I used it a lot to follow syscalls, observing errors and also testing conditional statements.
 
 
 ## Methodology 
@@ -68,7 +68,7 @@ Our methodology follows the same two steps from before, but the infector compone
 
 The virus searches for other programs in the current directory, opens them, and checks to see if they are eligible to be infected. We stick to ELF files, not previously infected, and only 64 bit, since 32 bit binaries aren't getting any younger.
 
-Once files are opened, it maps them into memory using *mmap(2)*. This makes these eligibility checks easier. The last of these checks is to search for an segment we can use to store the virus code, and if we find that we change the beginning of that segment and the entrypoint of the program to the end of the file. Finally, we write the code to the end of the file, so that when it is run by a user the first instructions ran will be our virus code.
+Once files are opened, it maps them into memory using [*mmap(2)*](https://www.man7.org/linux/man-pages/man2/mmap.2.html). This makes these eligibility checks easier. The last of these checks is to search for an segment we can use to store the virus code, and if we find that we change the beginning of that segment and the entrypoint of the program to the end of the file. Finally, we write the code to the end of the file, so that when it is run by a user the first instructions ran will be our virus code.
 
 
 One last thing is an important choice. Viruses usually execute the original host binary after or before executing their spreading routines. One thing to always remember when writing one is that we are executing from an infected file, and that file is being executed for a reason, probably to do something the user is expecting. If our virus doesn't run the original code, it will quickly raise suspicion and be detected. Older viruses would sometimes not do this, effectively breaking the original program.
@@ -79,7 +79,7 @@ An infected file will be modified to run our virus first, and the virus will the
 ![An infected file: OEP, legitimate code, new EP in the virus code, then a jmp back to the OEP at the very end of the infected file.](/assets/img/virus_infected_file_diagram.png)
 
 
-## Starting Out
+## Starting with FASM
 
 The first generation of our virus is its own separate binary, but every one after that will be executing from the end of an infected file. It is important to use techniques that work in either context the code could be running in.
 
@@ -103,7 +103,7 @@ syscall
 
 ```
 
-We define a macro, SYS_EXIT, to equal 60. This is basically the same as a preprocessor directive in C, a simple find/replace by the assembler. 60 is the syscall number for sys_exit on x64. A good reference for syscalls and their arguments is [this page](https://filippo.io/linux-syscall-table/). 
+We define a macro, SYS_EXIT, to equal 60. This is basically the same as a preprocessor directive in C, a simple find/replace by the assembler. 60 is the syscall number for sys_exit on x64. A good reference for syscalls and their arguments is [this syscall table](https://filippo.io/linux-syscall-table/). 
 
 The program is defined as a 64 bit ELF executable, with one readable and executable segment. We define a label for the entrypoint, and write some x64 to call sys_exit with the first argument of 42. The syscall reference I've linked tells us that the first argument to the syscall in rdi is the status code to pass to exit(), in this case 42. 
 
@@ -123,7 +123,7 @@ $
 $? tells us the exit code of the previous command, which was 42 as we expected. It works.
 
 
-Using Docker is probably a post topic on its own, but to get started I just made a simple Dockerfile, an Ubuntu container with gdb, fasm, gdb-peda, and objdump installed. The CMD instruction and the end is set to \["/bin/bash"\]. A docker-compose script builds the container and makes it easy to run with the run command and the name of the service as set in the compose file. In the repository I named it "workshop":
+Using Docker is probably a post topic on its own, but to get started I just made a simple Dockerfile, an Ubuntu container with gdb, fasm, pwndbg, and objdump installed. The CMD instruction and the end is set to \["/bin/bash"\]. A docker-compose script builds the container and makes it easy to run with the run command and the name of the service as set in the compose file. In the repository I named it "workshop":
 
 ```bash
 $ docker-compose run workshop
